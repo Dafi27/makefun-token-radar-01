@@ -10,18 +10,18 @@
 //
 // Implied value follows only from the snapshot's own figures, four factors:
 //
-//   base      = tvl_usd x 0.25
-//   growth    = clamp(change_7d, -60, 120) per cent
+//   base       = tvl_usd x 0.25
+//   growth     = clamp(change_7d, -60, 120) per cent
 //   growthMult = 1 + growth / 100 x weight, weight 0.5 on gains, 0.75 on losses:
 //                a protocol that is shrinking is a worse bet than a growing one
 //                is a good one, so losses count half again as much as gains.
-//   maturity  = 0.6 + min(age_days, 1095) / 1095 x 0.4   (age unknown: 365 days)
-//               How long it has run with no token: the longer a protocol has
-//               operated at size without issuing one, the more there is to
-//               launch, and the more patient its farmers have had to be.
-//   breadth   = 1 + 0.03 x min(chains - 1, 4): a protocol live on more chains
-//               has broader distribution, worth up to 12% more.
-//   implied   = max(1, round(base x growthMult x maturity x breadth))
+//   maturity   = 0.6 + min(age_days, 1095) / 1095 x 0.4   (age unknown: 365 days)
+//                How long it has run with no token: the longer a protocol has
+//                operated at size without issuing one, the more there is to
+//                launch, and the more patient its farmers have had to be.
+//   breadth    = 1 + 0.03 x min(chains - 1, 4): a protocol live on more chains
+//                has broader distribution, worth up to 12% more.
+//   implied    = max(1, round(base x growthMult x maturity x breadth))
 //
 // No protocol name is ever special-cased: the same function scores every row,
 // and the dashboard states the formula and recomputes every row from it.

@@ -199,7 +199,7 @@
         el('p', { text: 'The watchlist is the floor: every protocol with at least $' + Math.round(DATA.floor_usd / 1e6) + 'M of TVL and no token on record. The early radar adds every one of the ' + DATA.early_size + ' rankable pre-token protocols below that floor, not a sample of them. Implied value is a model, not a promise.' })
       ),
       el('div', { class: 'facts' },
-        el('div', { class: 'fact' }, el('span', { text: 'Watchlist covered' }), el('b', { text: DATA.watchlist_size + ' / ' + DATA.watchlist_size })),
+        el('div', { class: 'fact' }, el('span', { text: 'Watchlist covered' }), el('b', { text: DATA.rows.filter(function (r) { return r.on_watchlist; }).length + ' / ' + DATA.watchlist_size })),
         el('div', { class: 'fact' }, el('span', { text: 'Pre-token rows scored' }), el('b', { text: String(DATA.board_size) })),
         el('div', { class: 'fact' }, el('span', { text: 'Early rows below the floor' }), el('b', { text: String(DATA.early_size) })),
         el('div', { class: 'fact' }, el('span', { text: 'Live-token protocols set aside' }), el('b', { text: String(DATA.live_size) }))
@@ -216,9 +216,15 @@
     var top = Object.keys(totals).map(function (c) { return { category: c, value: totals[c] }; })
       .sort(function (a, b) { return b.value - a.value; }).slice(0, 6);
     var max = top.length ? top[0].value : 1;
+    var leader = top.length ? top[0].category : 'none';
+    var runnerUp = top.length > 1 ? top[1].category : null;
+    var note = 'Total implied value by category, across the whole board. ' +
+      (runnerUp
+        ? leader + ' holds the most, ahead of ' + runnerUp + ': the biggest pre-token value sits in protocols that already hold other people\u2019s money.'
+        : 'The biggest pre-token value sits in protocols that already hold other people\u2019s money.');
     return el('section', { class: 'panel chart' },
       el('h2', { text: 'Where the implied value sits' }),
-      el('p', { class: 'sub', text: 'Total implied value by category, across the whole board. Risk curators hold the most, ahead of onchain capital allocators: the biggest pre-token value sits in protocols that already hold other people\u2019s money.' }),
+      el('p', { class: 'sub', text: note }),
       top.map(function (t) {
         return el('div', { class: 'chart-row' },
           el('span', { class: 'cat', text: t.category }),
