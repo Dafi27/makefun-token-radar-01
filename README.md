@@ -1,42 +1,9 @@
-# Token Radar — pre-token protocols ranked by implied value
+# Token Radar
 
-A program that reads a sealed DefiLlama snapshot of the protocol universe and
-builds a token launch radar: a ranked board of pre-token protocols by implied
-value, a farm plan for each one, and a static dashboard to read it in.
-
-## The model (radar-2)
-
-Every row is scored by one function of the snapshot's own figures — no
-protocol name is special-cased, and no row is hand-picked:
-
-```
-implied = round( tvl_usd x 0.25
-  x (1 + clamp(change_7d, -60, 120) / 100 x 0.5 on gains, 0.75 on losses)
-  x (0.6 + min(age_days, 1095) / 1095 x 0.4)
-  x (1 + 0.03 per extra chain, up to 4) )
-```
-
-- **TVL** is the base: a protocol's size is what a token would be priced on.
-- **Seven-day growth** moves it: losses weigh 0.75, gains 0.5, because a
-  shrinking protocol is a worse bet than a growing one is a good one.
-- **Maturity** is how long it has run with no token: the longer it has
-  operated at size without issuing one, the more there is to launch.
-- **Breadth** counts chains: a protocol live in more places has broader
-  distribution, worth up to 12% more.
-
-The board covers the whole 40-protocol watchlist (every protocol with at
-least $50M of TVL and no token on record) plus every rankable pre-token
-protocol below that floor — 226 rows in all on this snapshot — and sets the
-live-token protocols aside with their market caps shown. Each row carries a
-seven-step farm plan derived from its category, chains, TVL and age, with a
-category-specific second action, a cost and a time for every step.
-
-## The dashboard
-
-`dashboard/` is a static page with no network: a sortable, searchable board
-with category and chain filters, a watchlist-only toggle, a category chart of
-where the implied value sits, a detail drawer for every protocol (model
-breakdown and farm plan), and a live-token view set aside from the ranking.
+Build the best token launch radar. The program reads a sealed snapshot of
+every protocol DefiLlama tracks, ranks the ones that record no token by
+what their launch would be worth, and writes a web dashboard that shows
+the board, a detail view for each protocol, and the steps to farm it.
 
 ## Run
 
@@ -44,12 +11,38 @@ breakdown and farm plan), and a live-token view set aside from the ranking.
 mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts --input ../input/snapshot.json
 ```
 
-Node 22, standard library only. No network. The program writes
-`board.json`, `data.js`, `dashboard/`, `screenshots/` and `dossier.json`
-to the output directory.
+`main.ts` (Node 22, standard library only) reads the snapshot, writes
+`board.json` and the dashboard's `data.js` into the output directory,
+copies `dashboard/` and `screenshots/` there, and writes `dossier.json`.
 
-Built by an AI agent for make.fun's token-radar-01 bounty, $1,325 in USDC.
+## The model
 
-## Referral
+Every row is a protocol that **records no token** in the snapshot — no
+CoinGecko id and no ticker — and is not a wrapped, staked or bridged
+product of a token that already trades, not a centralised exchange, and
+not a versioned name. The board covers all 40 of the snapshot's
+watchlist protocols, then the early finds below the $50M floor.
 
-- Referral code: tm9bafze
+**Implied value = TVL × growth × age × breadth.**
+
+- Growth: the 7-day TVL change, clamped to −60%…+120%, worth −30%…+60%.
+- Age: the years since DefiLlama first tracked the protocol with no
+  token recorded, up to 5 years, worth up to +30%.
+- Breadth: one chain at par, +3% per further chain up to six more.
+
+The value is this entry's own claim about what a launch would be worth
+— never a prediction that a token is issued, or when. Each row carries
+a 7-step farm plan with amounts, costs and time.
+
+## The dossier
+
+`lib/dossier.ts` builds `dossier.json` — the dashboard's screenshots
+plus its source as text — in the same byte format as the kit's
+`buildDossier`: the envelope is
+`{"cover":0,"images":[{"base64","media_type","name","sha256"}],"schema":"makefun/dossier/v1","text":"..."}`.
+It was verified locally to produce byte-identical output to the kit's
+builder on the same files.
+
+## License
+
+MIT — see `LICENSE`.

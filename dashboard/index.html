@@ -3,12 +3,77 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Radar: pre-token protocols ranked by implied value</title>
+<title>Token Radar — which pre-token protocol is worth farming next</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<a class="skip" href="#board">Skip to the board</a>
-<main id="board" tabindex="-1" aria-busy="true"></main>
+<header class="top">
+  <div class="brand">
+    <div class="mark">◉</div>
+    <div>
+      <h1>TOKEN RADAR</h1>
+      <p class="tag">Which pre-token protocol is worth farming next — ranked by what its launch would be worth.</p>
+    </div>
+  </div>
+  <div class="snap" id="snapLine">Snapshot 2026-11-14 · 758 protocols tracked</div>
+</header>
+
+<section class="stats" id="stats"></section>
+
+<section class="controls">
+  <label class="search">Search
+    <input id="q" type="search" placeholder="Protocol name or slug…" autocomplete="off">
+  </label>
+  <label>Category
+    <select id="cat"><option value="">All categories</option></select>
+  </label>
+  <label>Chain
+    <select id="chain"><option value="">All chains</option></select>
+  </label>
+  <label class="check"><input id="watchOnly" type="checkbox"> Watchlist only</label>
+  <label>Sort by
+    <select id="sort">
+      <option value="implied">Implied value</option>
+      <option value="tvl">TVL</option>
+      <option value="growth">7-day change</option>
+      <option value="name">Name</option>
+    </select>
+  </label>
+  <span class="count" id="count"></span>
+</section>
+
+<main class="layout">
+  <div class="boardWrap">
+    <table class="board">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>Protocol</th>
+          <th>Category</th>
+          <th>Chains</th>
+          <th class="num">TVL</th>
+          <th class="num">7d</th>
+          <th class="num">Implied value</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <aside class="detail" id="detail" aria-live="polite"></aside>
+</main>
+
+<section class="method">
+  <h2>How the ranking works</h2>
+  <p>Every row is a protocol that <strong>records no token</strong> in the snapshot — no CoinGecko id and no ticker — and is not a wrapped, staked or bridged product of a token that already trades, not a centralised exchange, and not a versioned name. The board covers all 40 of the snapshot's watchlist protocols, then the early finds below the $50M floor.</p>
+  <p><strong>Implied value = TVL × growth × age × breadth.</strong> Growth is the 7-day TVL change, clamped to −60%…+120%, worth −30%…+60%. Age is the years since DefiLlama first tracked the protocol with no token recorded, up to 5 years, worth up to +30%. Breadth is one chain at par, +3% per further chain up to six more. The value is this entry's own claim about what a launch would be worth — never a prediction that a token is issued, or when.</p>
+  <p>Each row carries a 7-step farm plan with amounts, costs and time. A plan is a starting point, not advice: check the protocol's own docs before you move funds, and never share a seed phrase or sign a transaction you cannot read.</p>
+</section>
+
+<footer class="foot">
+  <span>Token Radar · built from the sealed DefiLlama snapshot of 2026-11-14</span>
+  <span>Implied values are this entry's claim, not make.fun's and not a forecast.</span>
+</footer>
+
 <script src="../data.js"></script>
 <script src="app.js"></script>
 </body>
